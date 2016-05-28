@@ -11,7 +11,16 @@
 #echo "\n" >> "$1"
 # curl -s (silent)
 #      -m 5 max time
-curl -sm 5 'http://www.zz9-za.com/~opus/RF/last' >> "$1"
+MOD=$(curl -sm 5 'http://www.zz9-za.com/~opus/RF/last')
+
+# Find where the comments start.
+COMMENT_LINE=`awk '/^#/ {print NR + 1; exit 0; }' $1`
+
+MSG=`head -n$COMMENT_LINE $1`
+
+echo "$MSG\n$MOD" > $1
+
+
 
 # Uncomment the below to add a Signed-off-by line to the message.
 # Doing this in a hook is a bad idea in general, but the prepare-commit-msg
