@@ -11,7 +11,7 @@
 #echo "\n" >> "$1"
 # curl -s (silent)
 #      -m 5 max time
-MOD=$(curl -sm 5 'http://www.zz9-za.com/~opus/RF/last')
+MOD=$(curl -sm 5 'http://www.zz9-za.com/~opus/RF/random')
 #Assign a default message if it cannot connect
 MOD=${MOD:-"<no random message>"}
 
@@ -22,8 +22,6 @@ MSG=`head -n$(($COMMENT_LINE-1)) $1`
 TAIL=`tail -n+$COMMENT_LINE $1`
 
 echo "$MSG\n\n$MOD\n$TAIL" > $1
-
-
 
 # Uncomment the below to add a Signed-off-by line to the message.
 # Doing this in a hook is a bad idea in general, but the prepare-commit-msg
