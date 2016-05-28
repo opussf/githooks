@@ -12,6 +12,7 @@
 # curl -s (silent)
 #      -m 5 max time
 MOD=$(curl -sm 5 'http://www.zz9-za.com/~opus/RF/last')
+MOD=${MOD:-"<no random message>"}
 
 # Find where the comments start.
 COMMENT_LINE=`awk '/^#.*/ {print NR; exit 0; }' $1`
