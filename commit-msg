@@ -12,12 +12,11 @@
 # curl -s (silent)
 #      -m 5 max time
 MOD=$(curl -sm 5 'http://www.zz9-za.com/~opus/RF/last')
+#Assign a default message if it cannot connect
 MOD=${MOD:-"<no random message>"}
 
 # Find where the comments start.
 COMMENT_LINE=`awk '/^#.*/ {print NR; exit 0; }' $1`
-
-echo $COMMENT_LINE
 
 MSG=`head -n$(($COMMENT_LINE-1)) $1`
 TAIL=`tail -n+$COMMENT_LINE $1`
