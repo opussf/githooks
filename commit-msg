@@ -9,7 +9,9 @@
 # To enable this hook, rename this file to "commit-msg".
 
 #echo "\n" >> "$1"
-curl -m 5 'http://www.zz9-za.com/~opus/RF/last' >> "$1"
+# curl -s (silent)
+#      -m 5 max time
+curl -sm 5 'http://www.zz9-za.com/~opus/RF/last' >> "$1"
 
 # Uncomment the below to add a Signed-off-by line to the message.
 # Doing this in a hook is a bad idea in general, but the prepare-commit-msg
