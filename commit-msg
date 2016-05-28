@@ -18,10 +18,10 @@ COMMENT_LINE=`awk '/^#.*/ {print NR; exit 0; }' $1`
 
 echo $COMMENT_LINE
 
-MSG=`head -n$COMMENT_LINE $1`
+MSG=`head -n$(($COMMENT_LINE-1)) $1`
 TAIL=`tail -n+$COMMENT_LINE $1`
 
-#echo "$MSG\n\n$MOD\n\n$TAIL" > $1
+echo "$MSG\n\n$MOD\n\n$TAIL" > $1
 
 
 
