@@ -19,6 +19,7 @@ MOD=${MOD:-"<no random message>"}
 COMMENT_LINE=`awk '/^#.*/ {print NR; exit 0; }' $1`
 
 MSG=`head -n$(($COMMENT_LINE-1)) $1`
+echo ${#MSG}
 TAIL=`tail -n+$COMMENT_LINE $1`
 
 echo "$MSG\n\n$MOD\n$TAIL" > $1
