@@ -8,35 +8,43 @@
 #
 # To enable this hook, rename this file to "commit-msg".
 
-#echo "\n" >> "$1"
-# curl -s (silent)
-#      -m 5 max time
-MOD=$(curl -sm 5 'http://www.zz9-za.com/~opus/RF/random')
-#Assign a default message if it cannot connect
-MOD=${MOD:-"<no random message>"}
+# Do the easy local stuff first.
+GITABORTMSG="Aborting commit due to empty commit message"
 
-# Find where the comments start.
-COMMENT_LINE=`awk '/^#.*/ {print NR; exit 0; }' $1`
+# exit on 0 file size (no commit msg)
+if [ -s $1 ]; then  # file size is non-zero
+	# Find the first comment line
+	COMMENT_LINE=`awk '/^#.*/ {print NR; exit 0; }' $1`
+	#echo "COMMENT_LINE: (($COMMENT_LINE))"
+	if [ -n "$COMMENT_LINE" ]; then  # COMMENT_LINE is non-zero length
+		#echo "Found a comment line at: $COMMENT_LINE"
+		MSG=`head -n$(($COMMENT_LINE-1)) $1`
+		#echo "MSG: $MSG"
 
-MSG=`head -n$(($COMMENT_LINE-1)) $1`
-# Force exit if no comment given
-if [ ${#MSG} -eq 0 ]; then exit 1; fi
+		if [ -n "$MSG" ]; then  # MSG is non-zero
+			TAIL=`tail -n+$COMMENT_LINE $1`
+			#echo "TAIL: $TAIL"
+		else
+			#echo "Exiting on 0 length message"
+			echo $GITABORTMSG
+			exit 1
+		fi
+	else
+		#echo "Commit line is zero"
+		MSG=`cat $1`
+		TAIL=""
+	fi
+	#echo "MSG: $MSG\nTAIL: $TAIL"
 
-TAIL=`tail -n+$COMMENT_LINE $1`
+	# get the random msg
+	MOD=$(curl -sm 5 'http://www.zz9-za.com/~opus/RF/random')
+	#Assign a default message if it cannot connect
+	MOD=${MOD:-"<no random message>"}
 
-echo "$MSG\n\n$MOD\n$TAIL" > $1
-
-# Uncomment the below to add a Signed-off-by line to the message.
-# Doing this in a hook is a bad idea in general, but the prepare-commit-msg
-# hook is more suited to it.
-#
-# SOB=$(git var GIT_AUTHOR_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')
-# grep -qs "^$SOB" "$1" || echo "$SOB" >> "$1"
-
-# This example catches duplicate Signed-off-by lines.
-#
-#test "" = "$(grep '^Signed-off-by: ' "$1" |
-#	 sort | uniq -c | sed -e '/^[ 	]*1[ 	]/d')" || {
-#	echo >&2 Duplicate Signed-off-by lines.
-#	exit 1
-#}
+	# modify the commit file
+	echo "$MSG\n\n$MOD\n$TAIL" > $1
+else
+	#echo "empty commit file"
+	echo $GITABORTMSG
+	exit 1
+fi
